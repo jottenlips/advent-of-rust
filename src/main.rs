@@ -6,7 +6,10 @@ fn main() {
     let day = args[1].parse::<u32>().unwrap();
 
     match day {
-        1 => {day1::day_1();}
+        1 => {
+            day1::day_1();
+            day1::day_1_pt_2();
+        },
         _ => {println!("Day not found");}
     }
 }
