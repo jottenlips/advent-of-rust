@@ -30,10 +30,8 @@ pub fn day_1_pt_2() {
 
     let number_strings = contents.split('\n');
     let numbers: Vec<i32> = number_strings.map(|s| s.parse::<i32>().unwrap()).collect();
-    let window_size = 3;
-    let depth_increase_count = 0;
     let mut sums: Vec<i32> = vec![];
-    for (i, number) in numbers.iter().enumerate() {
+    for (i, _number) in numbers.iter().enumerate() {
         let sum_of_three: i32 = [0, 1, 2].iter().map(|x| get_value(numbers.clone(), *x as usize, i)).sum();
         sums.push(sum_of_three);
     }
