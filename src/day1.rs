@@ -8,6 +8,7 @@ pub fn day_1() {
     let number_strings = contents.split('\n');
     let numbers: Vec<i32> = number_strings.map(|s| s.parse::<i32>().unwrap()).collect();
     println!("Day 1 ans: {}", get_depth_increases(numbers));
+    day_1_pt_2();
 }
 
 fn get_depth_increases(numbers: Vec<i32>) -> i32 {
