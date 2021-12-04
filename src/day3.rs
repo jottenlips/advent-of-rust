@@ -77,66 +77,72 @@ fn day_3_pt2() {
       }
     });
 
-    let mut counts_oxygen:Vec<u32> = counts.clone();
 
 
     for (i, count) in counts.iter().enumerate() {
-
-      let mut lines_removed = 0;
-    
+     
       oxygen_ratings = oxygen_ratings.iter().filter(|line| {
           let has_1 = line.chars().nth(i).unwrap() == '1';
           let has_0 = line.chars().nth(i).unwrap() == '0';
-          
-          let oxygen_line_count = oxygen_ratings.clone().iter().count() as u32;
-          let total_lines_removed = line_count - oxygen_line_count;
-        
-          let more_o_1s = counts[i] - lines_removed  > (oxygen_line_count/2);
-          let more_o_0s = counts[i] - lines_removed   < (oxygen_line_count/2);
-          let equal_o_0_1 = counts[i] - lines_removed  == (oxygen_line_count/2);
+          let mut oxygen_counts:Vec<u32> = vec![0; line_length];
+          let oxygen_line_count = oxygen_ratings.clone().iter().count() as f64;
+          oxygen_ratings.iter().clone().for_each(|x|{
+            let bits = x.chars().map(|x| x.to_digit(10).unwrap()).collect::<Vec<u32>>();
+            for (j, bit) in bits.iter().enumerate() {
+              oxygen_counts[j] += bit;
+            }
+          });
 
-     
-          println!("{:?} {:?}", lines_removed,  oxygen_line_count);
+          let half = oxygen_line_count/2.0;
+          let more_o_1s = (oxygen_counts[i] as f64) > half;
+          let more_o_0s = (oxygen_counts[i] as f64) < half;
+          let equal_o_0_1 = (oxygen_counts[i] as f64) == half;
 
           if has_1 && (more_o_1s || equal_o_0_1) {
             return true
           } 
-          if has_0 && more_o_0s {
+          if has_0 && (more_o_0s) {
             return true
           }
           if oxygen_ratings.iter().count() == 1 {
             return true
           }
-          lines_removed += 1;
-
           return false
       }).cloned().collect();
-      lines_removed = 0;
-      println!(" {:?}", oxygen_ratings);
 
-    //   co2_ratings = co2_ratings.iter().filter(|line| {
-    //       let has_1 = line.chars().nth(i).unwrap() == '1';
-    //       let has_0 = line.chars().nth(i).unwrap() == '0';
-          
-    //       if has_0 && more_1s {
-    //         return true
-    //       } 
-    //       if has_1 && (more_0s || equal_0_1) {
-    //         return true
-    //       }
-    //       if co2_ratings.iter().count() == 1 {
-    //         return true
-    //       }
-    //       // counts[i] - 1;
-    //       return false
-    //     }).cloned().collect();
+        co2_ratings = co2_ratings.iter().filter(|line| {
+          let has_1 = line.chars().nth(i).unwrap() == '1';
+          let has_0 = line.chars().nth(i).unwrap() == '0';
+          let mut co2_counts:Vec<u32> = vec![0; line_length];
+          let co2_line_count = co2_ratings.clone().iter().count() as f64;
+          co2_ratings.iter().clone().for_each(|x|{
+            let bits = x.chars().map(|x| x.to_digit(10).unwrap()).collect::<Vec<u32>>();
+            for (j, bit) in bits.iter().enumerate() {
+              co2_counts[j] += bit;
+            }
+          });
+          let half = co2_line_count/2.0;
+          let more_1s = (co2_counts[i] as f64) > half;
+          let more_0s = (co2_counts[i] as f64) < half;
+          let equal_0_1 = (co2_counts[i] as f64) == half;
 
+          if has_0 && (more_1s || equal_0_1) {
+              return true
+          } 
+          if has_1 && (more_0s) {
+            return true
+          }
+          if co2_ratings.iter().count() == 1 {
+              return true
+          }
+          return false
+        }).cloned().collect();
     }
     let oxygen_rating = oxygen_ratings.iter().next().unwrap();
-    // let co2_rating = co2_ratings.iter().next().unwrap();
-    // let life_support_score = binary_to_decimal(oxygen_rating) * binary_to_decimal(co2_rating);
+    let co2_rating = co2_ratings.iter().next().unwrap();
+    let life_support_score = binary_to_decimal(oxygen_rating) * binary_to_decimal(co2_rating);
 
-    println!("Day 3 pt 2 ans: {:?}", binary_to_decimal(oxygen_rating));
+    println!("Day 3 pt 2 ans: {:?}", life_support_score);
 
 }
 
