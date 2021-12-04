@@ -52,7 +52,7 @@ pub fn day_2_pt_2() {
       match &direction as &str {
         "forward" => {
           forward_distance += distance;
-          depth += (distance * aim);
+          depth += distance * aim;
         },
         "up" => {
           aim -= distance;
