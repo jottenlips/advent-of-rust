@@ -32,7 +32,7 @@ impl BoardActions for Board<'_> {
           if *cell {
             row_count += 1;
           }
-          if (row_count == 5) {
+          if row_count == 5 {
             return true;
           }
         }
@@ -44,7 +44,7 @@ impl BoardActions for Board<'_> {
           if self.markers[y][x] {
             col_count += 1;
           }
-          if (col_count == 5) {
+          if col_count == 5 {
             return true;
           }
         }
@@ -54,7 +54,6 @@ impl BoardActions for Board<'_> {
     fn calculate_score(&self, last_call: &str) -> u32 {
       let mut score = 0;
       for x in 0..self.width {
-        let mut col_count = 0;
         for y in 0..self.height {
           if !self.markers[x][y] {
             score += self.board[x][y].parse::<u32>().unwrap();
@@ -96,7 +95,7 @@ pub fn day_4() {
         }).collect();
     }).collect();
     let mut boards:Vec<Board> = board_inputs.iter().map(|board_input| {
-        let mut board = Board {
+        let board = Board {
             board: board_input.to_vec(),
             markers: vec![vec![false; 5]; 5],
             width: board_input[0].len(),
@@ -113,15 +112,12 @@ pub fn day_4() {
         bingo = boards[i].check_bingo();
         current_board_number = i;
         if bingo {
-          println!("{}", bingo_number);
           break;
         }
      
       }
       if bingo {
-        println!("BINGO: {:?}", boards[current_board_number]);
-        println!("Score: {}", boards[current_board_number].calculate_score(bingo_number));
-
+        println!("Day 4 answer: {}", boards[current_board_number].calculate_score(bingo_number));
         break;
       }
     }
