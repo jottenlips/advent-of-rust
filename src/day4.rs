@@ -1,8 +1,9 @@
 use std::fs;
 use std::fmt;
+use std::pin::Pin;
 
 trait BoardActions {
-    fn mark_board(&self);
+    fn check_win(&self, items: Vec<&str>) -> bool;
 }
 
 struct Board<'a> {
@@ -12,20 +13,20 @@ struct Board<'a> {
 }
 
 impl BoardActions for Board<'_> {
-    fn mark_board(&self) {
-        println!("marked!");
+    fn check_win(&self, items: Vec<&str>)->bool {
+      false
     }
 }
+
 impl fmt::Debug for Board<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "\n\n-----------------------\n")?;
         Ok(for row in &self.board {
             for cell in row {
-                write!(f, "{} ", cell)?;
+              write!(f, "{} ", cell)?;
             }
             write!(f, "\n-----------------------\n")?;
         })
-        // write!(f, "Board: {:?}", self.board)
     }
 }
 
