@@ -55,7 +55,6 @@ fn day_3_pt2() {
     let contents = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
     let lines = contents.split('\n');
-    let line_count = lines.clone().count() as u32;
 
     let mut oxygen_ratings:Vec<String> = lines.clone().map(|s| s.to_string()).collect();
     let mut co2_ratings:Vec<String> = lines.clone().map(|s| s.to_string()).collect();
@@ -79,7 +78,7 @@ fn day_3_pt2() {
 
 
 
-    for (i, count) in counts.iter().enumerate() {
+    for (i, _count) in counts.iter().enumerate() {
      
       oxygen_ratings = oxygen_ratings.iter().filter(|line| {
           let has_1 = line.chars().nth(i).unwrap() == '1';
