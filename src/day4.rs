@@ -121,7 +121,62 @@ pub fn day_4() {
         break;
       }
     }
+  day_4_pt_2() 
+}
 
-      
+fn day_4_pt_2() {
+    let filename = "day4pt2.txt";
+    let contents = fs::read_to_string(filename)
+        .expect("Something went wrong reading the file");
 
+    let mut lines = contents.split("\n\n");
+    let bingo_line = lines.next().unwrap();
+    let bingo_numbers:Vec<&str> = bingo_line.split(',').collect();
+
+    let board_strings:Vec<&str> = lines.collect();
+    let number_of_boards = board_strings.len();
+    let board_inputs:Vec<Vec<Vec<&str>>> = board_strings.iter().map(|board_string| {
+        return board_string.split("\n").collect::<Vec<&str>>().iter().map(|row| {
+            return row.split(" ").filter(|&x| x != "" && x != "\n").collect();
+        }).collect();
+    }).collect();
+    let mut boards:Vec<Board> = board_inputs.iter().map(|board_input| {
+        let board = Board {
+            board: board_input.to_vec(),
+            markers: vec![vec![false; 5]; 5],
+            width: board_input[0].len(),
+            height: board_input.len(),
+        };
+        return board
+    }).collect();
+
+    let mut _bingo = false;
+    
+    let mut last_winning_board_number = 0;
+    let mut winning_board_history = vec![];
+    let mut last_winning_number = "";
+    let mut _number_of_winners = 0;
+    let mut break_loop = false;
+
+    for bingo_number in bingo_numbers {
+      for i in 0..number_of_boards {
+        boards[i].mark_board(bingo_number);
+        _bingo = boards[i].check_bingo();
+        if _bingo && !winning_board_history.contains(&i) {
+          last_winning_board_number = i;
+          winning_board_history.push(i);
+          last_winning_number = bingo_number;
+          _number_of_winners += 1;
+        }
+        if winning_board_history.len() == number_of_boards {
+          break_loop = true;
+          break;
+        }
+      }
+      if break_loop {
+        break;
+      }
+    } 
+
+    println!("Day 4 pt2 answer: {:?}", boards[last_winning_board_number].calculate_score(last_winning_number));
 }
