@@ -3,19 +3,31 @@ use std::fmt;
 use std::pin::Pin;
 
 trait BoardActions {
-    fn check_win(&self, items: Vec<&str>) -> bool;
+    fn mark_board(&self, items: &str) -> bool;
 }
 
 struct Board<'a> {
     board: Vec<Vec<&'a str>>,
+    markers:  Vec<Vec<bool>>,
     width: usize,
     height: usize,
 }
 
 impl BoardActions for Board<'_> {
-    fn check_win(&self, items: Vec<&str>)->bool {
-      false
+    fn mark_board(&self, item: &str)->bool {
+      for (i, row) in self.board.iter().enumerate() {
+          for (j, cell) in row.iter().enumerate() {
+            if &item == cell {
+              {
+                self.markers[i][j] = true;
+              }
+              println!("{:?}",self.markers)
+            }
+          }
+        }
+        return false;
     }
+
 }
 
 impl fmt::Debug for Board<'_> {
@@ -47,15 +59,24 @@ pub fn day_4() {
         }).collect();
     }).collect();
     let boards:Vec<Board> = board_inputs.iter().map(|board_input| {
-        return Board {
+        let mut board = Board {
             board: board_input.to_vec(),
+            markers: vec![vec![false; 5]; 5],
             width: board_input[0].len(),
             height: board_input.len(),
         };
+        return board
     }).collect();
 
+    for bingo_number in bingo_numbers {
+        for board in &boards {
+            let win = board.mark_board(bingo_number);
+            println!("{:?}", win);
+        }
+    }
+
    
-    println!("bingo: {:?}, {:?}",bingo_numbers,boards[2]);
+    println!("bingo: {:?}",boards[2].markers);
     
 
 }
