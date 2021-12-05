@@ -1,9 +1,10 @@
 use std::fs;
 use std::fmt;
-use std::pin::Pin;
 
 trait BoardActions {
-    fn mark_board(&self, items: &str) -> bool;
+    fn mark_board(&mut self, items: &str);
+    fn check_bingo(&self) -> bool;
+    fn calculate_score(&self, last_call: &str) -> u32;
 }
 
 struct Board<'a> {
@@ -14,19 +15,55 @@ struct Board<'a> {
 }
 
 impl BoardActions for Board<'_> {
-    fn mark_board(&self, item: &str)->bool {
+    fn mark_board(&mut self, item: &str) {
       for (i, row) in self.board.iter().enumerate() {
           for (j, cell) in row.iter().enumerate() {
             if &item == cell {
-              {
-                self.markers[i][j] = true;
-              }
-              println!("{:?}",self.markers)
+              self.markers[i][j] = true;
             }
           }
         }
-        return false;
     }
+    fn check_bingo(&self) -> bool {
+      // check horizontal
+      for row in self.markers.iter() {
+        let mut row_count = 0;
+        for cell in row.iter() {
+          if *cell {
+            row_count += 1;
+          }
+          if (row_count == 5) {
+            return true;
+          }
+        }
+      }
+      // check vertical
+      for x in 0..self.height {
+        let mut col_count = 0;
+        for y in 0..self.width {
+          if self.markers[y][x] {
+            col_count += 1;
+          }
+          if (col_count == 5) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    fn calculate_score(&self, last_call: &str) -> u32 {
+      let mut score = 0;
+      for x in 0..self.width {
+        let mut col_count = 0;
+        for y in 0..self.height {
+          if !self.markers[x][y] {
+            score += self.board[x][y].parse::<u32>().unwrap();
+          }
+        }
+      }
+      return score * last_call.parse::<u32>().unwrap();
+    }
+
 
 }
 
@@ -58,7 +95,7 @@ pub fn day_4() {
             return row.split(" ").filter(|&x| x != "" && x != "\n").collect();
         }).collect();
     }).collect();
-    let boards:Vec<Board> = board_inputs.iter().map(|board_input| {
+    let mut boards:Vec<Board> = board_inputs.iter().map(|board_input| {
         let mut board = Board {
             board: board_input.to_vec(),
             markers: vec![vec![false; 5]; 5],
@@ -68,15 +105,27 @@ pub fn day_4() {
         return board
     }).collect();
 
+    let mut bingo = false;
+    let mut current_board_number = 0;
     for bingo_number in bingo_numbers {
-        for board in &boards {
-            let win = board.mark_board(bingo_number);
-            println!("{:?}", win);
+      for i in 0..number_of_boards {
+        boards[i].mark_board(bingo_number);
+        bingo = boards[i].check_bingo();
+        current_board_number = i;
+        if bingo {
+          println!("{}", bingo_number);
+          break;
         }
+     
+      }
+      if bingo {
+        println!("BINGO: {:?}", boards[current_board_number]);
+        println!("Score: {}", boards[current_board_number].calculate_score(bingo_number));
+
+        break;
+      }
     }
 
-   
-    println!("bingo: {:?}",boards[2].markers);
-    
+      
 
 }
