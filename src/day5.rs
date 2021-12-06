@@ -149,8 +149,6 @@ pub fn day_5_pt_2() {
     floor_map.draw_line(sea_floor_vent_coord_pair.0, sea_floor_vent_coord_pair.1, true);
   }
 
-  // println!("Map: {:?}", floor_map);
-
-  println!("Day 4 pt 2 ans: {:?}", floor_map.count_intersections());
+  println!("Day 5 pt 2 ans: {:?}", floor_map.count_intersections());
 
 }
