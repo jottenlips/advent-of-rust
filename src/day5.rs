@@ -4,6 +4,7 @@ use std::fmt;
 
 trait MapActions {
     fn draw_line(&mut self, start:Vec<i32>, end:Vec<i32>);
+    fn count_intersections(&self) -> i32;
 }
 
 
@@ -17,24 +18,30 @@ struct FloorMap {
 
 impl MapActions for FloorMap {
     fn draw_line(&mut self, start:Vec<i32>, end:Vec<i32>) {
-
-    
       let start_x = if start[0] > end[0] { end[0] } else { start[0] };
       let start_y = if start[1] > end[1] { end[1] } else { start[1] };
       
       let end_x = if end[0] > start[0] { end[0] } else { start[0]};
       let end_y = if end[1] > start[1] { end[1] } else { start[1]};
-      println!("start: {:?} end: {:?}", start_x, end_x);
-      println!("startY: {:?} endY: {:?}", start_y, end_y);
 
       if start_x == end_x || start_y == end_y {
         (start_y..end_y+1).for_each(|y| {
           (start_x..end_x+1).for_each(|x| {
-              println!("x: {}, y: {}", x, y);
               self.topography[y as usize][x as usize] += 1;
           });
         });
       }
+    }
+    fn count_intersections(&self) -> i32 {
+      let mut intersections = 0;
+      for y in 0..self.height {
+        for x in 0..self.width {
+          if self.topography[y][x] > 1 {
+            intersections += 1;
+          }
+        }
+      }
+      intersections
     }
 }
 
@@ -58,11 +65,10 @@ pub fn day_5() {
     let lines = contents.split('\n');
     let mut largest_x = 0;
     let mut largest_y = 0;
-    let mut sea_floor_vent_coord_pairs = lines.map(|line| {
+    let sea_floor_vent_coord_pairs = lines.map(|line| {
       let mut coords = line.split(" -> ");
-      let mut first_coord = coords.next().unwrap().split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
-      let mut second_coord = coords.next().unwrap().split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
-      println!("{:?} to {:?} ", first_coord, second_coord);
+      let first_coord = coords.next().unwrap().split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
+      let second_coord = coords.next().unwrap().split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
       if first_coord[0] > largest_x {
         largest_x = first_coord[0];
       }  
@@ -88,10 +94,6 @@ pub fn day_5() {
       floor_map.draw_line(sea_floor_vent_coord_pair.0, sea_floor_vent_coord_pair.1);
     }
 
-    println!("{:?}", floor_map);
-
-    println!("\n {:?} ", largest_x);
-    println!("\n {:?} ", largest_y);
-
-
+    // println!("Floor Map: {:?}", floor_map);
+    println!("Day 4 ans: {:?}", floor_map.count_intersections());
 }
