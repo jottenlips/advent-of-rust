@@ -1,10 +1,55 @@
 use std::fs;
 
+use std::fmt;
+
+trait MapActions {
+    fn draw_line(&mut self, start:Vec<i32>, end:Vec<i32>);
+}
+
+
 struct FloorMap {
     topography: Vec<Vec<i32>>,
     width: usize,
     height: usize,
 }
+
+
+
+impl MapActions for FloorMap {
+    fn draw_line(&mut self, start:Vec<i32>, end:Vec<i32>) {
+
+    
+      let start_x = if start[0] > end[0] { end[0] } else { start[0] };
+      let start_y = if start[1] > end[1] { end[1] } else { start[1] };
+      
+      let end_x = if end[0] > start[0] { end[0] } else { start[0]};
+      let end_y = if end[1] > start[1] { end[1] } else { start[1]};
+      println!("start: {:?} end: {:?}", start_x, end_x);
+      println!("startY: {:?} endY: {:?}", start_y, end_y);
+
+      if start_x == end_x || start_y == end_y {
+        (start_y..end_y+1).for_each(|y| {
+          (start_x..end_x+1).for_each(|x| {
+              println!("x: {}, y: {}", x, y);
+              self.topography[y as usize][x as usize] += 1;
+          });
+        });
+      }
+    }
+}
+
+impl fmt::Debug for FloorMap {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "\n\n-----------------------\n")?;
+        Ok(for row in &self.topography {
+            for cell in row {
+              write!(f, "{} ", cell)?;
+            }
+            write!(f, "\n-----------------------\n")?;
+        })
+    }
+}
+
 
 pub fn day_5() {
     let filename = "day5.txt";
@@ -13,7 +58,7 @@ pub fn day_5() {
     let lines = contents.split('\n');
     let mut largest_x = 0;
     let mut largest_y = 0;
-    for line in lines {
+    let mut sea_floor_vent_coord_pairs = lines.map(|line| {
       let mut coords = line.split(" -> ");
       let mut first_coord = coords.next().unwrap().split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
       let mut second_coord = coords.next().unwrap().split(',').map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
@@ -30,9 +75,23 @@ pub fn day_5() {
       if second_coord[1] > largest_y {
         largest_y = second_coord[1];
       }
+      return (first_coord, second_coord);
+    }).collect::<Vec<(Vec<i32>, Vec<i32>)>>();
+
+    let mut floor_map = FloorMap {
+      topography: vec![vec![0; largest_x as usize + 1]; largest_y as usize + 1],
+      width: largest_x as usize + 1,
+      height: largest_y as usize + 1,
     };
 
-    println!("{:?} by {:?} ", largest_x, largest_y);
+    for sea_floor_vent_coord_pair in sea_floor_vent_coord_pairs {
+      floor_map.draw_line(sea_floor_vent_coord_pair.0, sea_floor_vent_coord_pair.1);
+    }
+
+    println!("{:?}", floor_map);
+
+    println!("\n {:?} ", largest_x);
+    println!("\n {:?} ", largest_y);
 
 
 }
