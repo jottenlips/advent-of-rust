@@ -34,7 +34,6 @@ pub fn day_8() {
     input_letters.iter().for_each(|x| {
       let length = x.len();
       let sorted_x = sort_string(&x);
-      // println!("sorted: {}", sorted_x);
       match length {
         // 1 uses two segments
         2 => {
@@ -58,7 +57,6 @@ pub fn day_8() {
       }
     });
   
-    println!("{:?}", unknown_numbers);
     for number in unknown_numbers {
       let mut chars_shared_with_one = 0;
       let mut chars_shared_with_four = 0;
@@ -80,9 +78,6 @@ pub fn day_8() {
         }
  
       } 
-
-      // print chars shared 
-      println!("{} {} {} {}", chars_shared_with_one, chars_shared_with_four, chars_shared_with_seven, chars_shared_with_eight);
   
       match (chars_shared_with_one, chars_shared_with_four, chars_shared_with_seven, chars_shared_with_eight) {
         (1, 2, 2, 5) => {
@@ -100,21 +95,17 @@ pub fn day_8() {
         (2, 4, 3, 6) => {
           nine = number.clone();
         },
-        (2,3,3, 6) => {
+        (2, 3, 3, 6) => {
           zero = number.clone();
         },
         _ => {
         }
       }
-      println!("----")
     }
-
-    println!("zero: {} \n one: {},\n two: {}\n three: {}\n four: {}\n five: {}\n six: {}\n seven: {}\n eight: {}\n nine: {}\n\n", zero, one, two, three, four, five, six, seven, eight, nine);
 
     let mut output_vec = Vec::new();
     output_letters.iter().for_each(|y| {
       let output_number = sort_string(&y.clone());
-      println!("output_number: {}", output_number);
       if output_number == one {
         count += 1;
         output_vec.push('1')
@@ -142,9 +133,7 @@ pub fn day_8() {
       }
     });
     let output_string = output_vec.iter().collect::<String>();
-    println!("output: {:?} {} {:?}", output_vec, output_string, output_letters);
     output_sum += output_string.parse::<i32>().unwrap();
-    // println!("outpusum: {}", output_sum);
   }
 
   println!("Day 8 ans: {}", count);
