@@ -31,24 +31,23 @@ impl PointTrait for Point {
   }
   // start count at 1
   fn search_point(&self, points:&Vec<Point>, count: u32) -> u32 {
-      // if self.left != 9 {
-      //   let left_point = points.iter().find(|p| p.i == self.i && p.j == self.j - 1).unwrap();
-      //   return left_point.search_point(points, count + 1);
-      // }
-      // if self.right != 9 {
-      //   let right_point = points.iter().find(|p| p.i == self.i && p.j == self.j + 1).unwrap();
-      //   return right_point.search_point(points, count + 1);
-      // }
-      // if self.down != 9 {
-      //   let down_point = points.iter().find(|p| p.i == self.i + 1 && p.j == self.j).unwrap();
-      //   return down_point.search_point(points, count + 1);
-      // }
-      // if self.up != 9 {
-      //   let up_point = points.iter().find(|p| p.i == self.i - 1 && p.j == self.j).unwrap();
-      //   return up_point.search_point(points, count + 1);
-      // }
-      // return count;
-      return 0
+      if self.left != 9 {
+        let left_point = points.iter().find(|p| p.i == self.i && p.j == self.j - 1).unwrap();
+        return left_point.search_point(points, count + 1);
+      }
+      if self.right != 9 {
+        let right_point = points.iter().find(|p| p.i == self.i && p.j == self.j + 1).unwrap();
+        return right_point.search_point(points, count + 1);
+      }
+      if self.down != 9 {
+        let down_point = points.iter().find(|p| p.i == self.i + 1 && p.j == self.j).unwrap();
+        return down_point.search_point(points, count + 1);
+      }
+      if self.up != 9 {
+        let up_point = points.iter().find(|p| p.i == self.i - 1 && p.j == self.j).unwrap();
+        return up_point.search_point(points, count + 1);
+      }
+      return count;
   }
 }
 
