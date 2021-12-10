@@ -6,6 +6,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 use std::env;
 
 fn main() {
@@ -36,6 +37,9 @@ fn main() {
         },
         8 => {
             day8::day_8();
+        }
+        9 => {
+            day9::day_9();
         }
         _ => {println!("Day not found");}
     }
