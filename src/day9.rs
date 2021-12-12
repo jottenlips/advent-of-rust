@@ -8,6 +8,7 @@ struct Point {
     left: u32,
     right: u32,
     center: u32,
+    visited: bool,
     // location
     i: usize,
     j: usize,
@@ -15,7 +16,7 @@ struct Point {
 
 trait PointTrait {
     fn is_center_low_point(&self) -> bool;
-    fn search_point(&self, points: &Vec<Point>, count: u32) -> u32;
+    // fn search_point(&mut self, points: &Vec<Point>, count: u32, visited: Vec<(u32, u32)>) -> u32;
 }
 
 impl PointTrait for Point {
@@ -23,25 +24,38 @@ impl PointTrait for Point {
     self.center < self.up && self.center < self.down && self.center < self.left && self.center < self.right
   }
   // start count at 1
-  fn search_point(&self, points:&Vec<Point>, count: u32) -> u32 {
-      if self.left != 9 {
-        let left_point = points.iter().find(|p| p.i == self.i && p.j == self.j - 1).unwrap();
-        return left_point.search_point(points, count + 1);
-      }
-      if self.right != 9 {
-        let right_point = points.iter().find(|p| p.i == self.i && p.j == self.j + 1).unwrap();
-        return right_point.search_point(points, count + 1);
-      }
-      if self.down != 9 {
-        let down_point = points.iter().find(|p| p.i == self.i + 1 && p.j == self.j).unwrap();
-        return down_point.search_point(points, count + 1);
-      }
-      if self.up != 9 {
-        let up_point = points.iter().find(|p| p.i == self.i - 1 && p.j == self.j).unwrap();
-        return up_point.search_point(points, count + 1);
-      }
-      return count;
-  }
+  // fn search_point(&mut self, mut points:&Vec<Point>, count: u32, mut visited: Vec<(u32, u32)>) -> u32 {
+  //     println!("searching point: {:?}", self);
+  //     if visited.contains(&(self.i as u32, self.j as u32)) {
+  //       return count;
+  //     }
+  //     visited.push((self.i as u32, self.j as u32));
+  //     if self.left < 9 {
+  //       let mut left_point = points.iter().find(|p| p.i == self.i && p.j == self.j - 1).unwrap().clone();
+  //       let mut remove_index = points.iter().position(|p| p.i == self.i && p.j == self.j - 1).unwrap();
+  //       points.clone().remove(remove_index);
+  //       return left_point.search_point(points, count + 1, visited);
+  //     }
+  //     if self.right < 9 {
+  //       let mut right_point = points.iter().find(|p| p.i == self.i && p.j == self.j + 1).unwrap().clone();
+  //       let mut remove_index = points.iter().position(|p| p.i == self.i && p.j == self.j + 1).unwrap();
+  //       points.clone().remove(remove_index);
+  //       return right_point.search_point(points, count + 1, visited);
+  //     }
+  //     if self.down < 9 {
+  //       let mut down_point = points.iter().find(|p| p.i == self.i + 1 && p.j == self.j).unwrap().clone();
+  //       let mut remove_index = points.iter().position(|p| p.i == self.i + 1 && p.j == self.j).unwrap();
+  //       points.clone().remove(remove_index);
+  //       return down_point.search_point(points, count + 1, visited);
+  //     }
+  //     if self.up < 9 {
+  //       let mut up_point = points.iter().find(|p| p.i == self.i - 1 && p.j == self.j).unwrap().clone();
+  //       let mut remove_index = points.iter().position(|p| p.i == self.i - 1 && p.j == self.j).unwrap();
+  //       points.clone().remove(remove_index);
+  //       return up_point.search_point(points, count + 1, visited);
+  //     }
+  //     return count;
+  // }
 }
 
 
@@ -78,12 +92,13 @@ pub fn day_9 () {
       if j > 0 {
         left = line.chars().nth(j-1).unwrap().to_digit(10).unwrap();
       }
-      let point = Point {
+      let mut point = Point {
         up: up,
         down: down,
         left: left,
         right: right,
         center: number,
+        visited: false,
         i: i,
         j: j,
       };
@@ -91,12 +106,64 @@ pub fn day_9 () {
     }
   }
 
-  let (low_points, risk) = find_low_points_and_risk(&points);
+  let (mut low_points, risk) = find_low_points_and_risk(&points);
   println!("Day 9 pt 1: {}", risk);
 
-  let mut basins = Vec::new();
+  let mut basins:Vec<u32> = Vec::new();
   for point in low_points {
-    basins.push(point.search_point(&points.clone(), 1));
+    let mut points_to_search:Vec<Point> = points.clone();
+    let mut start_point = point.clone();
+
+    while points_to_search.len() > 0 {
+      let mut current_point = points_to_search.pop().unwrap();
+      if current_point.visited {
+        continue;
+      } else {
+        current_point.visited = true;
+        println!("{} {}",current_point.i, current_point.j);
+        if current_point.center != 9 {
+          basins.push(current_point.center);
+          if current_point.left < 9 {
+            let mut left_point = points_to_search.iter().find(|p| p.i == current_point.i && p.j == current_point.j - 1);
+            if left_point.is_some() {
+              let mut left_point = left_point.unwrap().clone();
+              if !left_point.visited {
+                points_to_search.push(left_point);
+              }
+            }
+          }
+            let mut right_point = points_to_search.iter().find(|p| p.i == current_point.i && p.j == current_point.j + 1);
+            if right_point.is_some() {
+              let mut right_point = right_point.unwrap().clone();
+              if !right_point.visited {
+                points_to_search.push(right_point);
+              }
+            }
+          
+            let mut down_point = points_to_search.iter().find(|p| p.i == current_point.i + 1 && p.j == current_point.j);
+            if down_point.is_some() {
+              let mut down_point = down_point.unwrap().clone();
+              if !down_point.visited {
+                points_to_search.push(down_point);
+              }
+            }
+   
+        
+            let mut up_point = points_to_search.iter().find(|p| p.i == current_point.i - 1 && p.j == current_point.j);
+            if up_point.is_some() {
+              let mut up_point = up_point.unwrap().clone();
+              if !up_point.visited {
+                points_to_search.push(up_point);
+              }
+            }
+          
+        }
+      }
+
+
+    }
+    // basins.push(start_point.search_point(&points.clone(), 1, visited));
+    
   }
   println!("Day 9 pt 2: {:?}", basins);
 }
