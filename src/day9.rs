@@ -120,7 +120,6 @@ pub fn day_9 () {
         continue;
       } else {
         current_point.visited = true;
-        println!("{} {}",current_point.i, current_point.j);
         if current_point.center != 9 {
           basins.push(current_point.center);
           if current_point.left < 9 {
@@ -128,6 +127,7 @@ pub fn day_9 () {
             if left_point.is_some() {
               let mut left_point = left_point.unwrap().clone();
               if !left_point.visited {
+                left_point.visited = true;
                 points_to_search.push(left_point);
               }
             }
@@ -136,6 +136,7 @@ pub fn day_9 () {
             if right_point.is_some() {
               let mut right_point = right_point.unwrap().clone();
               if !right_point.visited {
+                right_point.visited = true;
                 points_to_search.push(right_point);
               }
             }
@@ -144,15 +145,16 @@ pub fn day_9 () {
             if down_point.is_some() {
               let mut down_point = down_point.unwrap().clone();
               if !down_point.visited {
+                down_point.visited = true;
                 points_to_search.push(down_point);
               }
             }
    
-        
             let mut up_point = points_to_search.iter().find(|p| p.i == current_point.i - 1 && p.j == current_point.j);
             if up_point.is_some() {
               let mut up_point = up_point.unwrap().clone();
               if !up_point.visited {
+                up_point.visited = true;
                 points_to_search.push(up_point);
               }
             }
