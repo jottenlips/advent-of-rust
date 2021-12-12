@@ -1,6 +1,7 @@
 use std::fs;
-use std::fmt;
+// use std::fmt;
 
+#[derive(Clone, Debug)]
 struct Point {
     up: u32,
     down: u32,
@@ -15,14 +16,6 @@ struct Point {
 trait PointTrait {
     fn is_center_low_point(&self) -> bool;
     fn search_point(&self, points: &Vec<Point>, count: u32) -> u32;
-}
-
-impl Copy for Point { }
-
-impl Clone for Point {
-    fn clone(&self) -> Point {
-        *self
-    }
 }
 
 impl PointTrait for Point {
@@ -52,11 +45,11 @@ impl PointTrait for Point {
 }
 
 
-impl fmt::Debug for Point {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-      write!(f, "up {}, down {}, left {}, right {}, center {} \n is low:{:?} at i{} j{}", self.up, self.down, self.left, self.right, self.center, self.is_center_low_point(), self.i, self.j)
-    }
-}
+// impl fmt::Debug for Point {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//       write!(f, "up {}, down {}, left {}, right {}, center {} \n is low:{:?} at i{} j{}", self.up, self.down, self.left, self.right, self.center, self.is_center_low_point(), self.i, self.j)
+//     }
+// }
 
 pub fn day_9 () {
   let filename = "day9.txt";
@@ -100,8 +93,14 @@ pub fn day_9 () {
 
   let (low_points, risk) = find_low_points_and_risk(points);
   println!("Day 9 pt 1: {}", risk);
-  day_9_pt_2(&low_points, &points);
+
+  let mut basins = Vec::new();
+  for point in low_points {
+    basins.push(point.search_point(points, 1));
+  }
+  println!("Day 9 pt 2: {:?}", basins);
 }
+
 
 fn find_low_points_and_risk(points: Vec<Point>) -> (Vec<Point>, u32) {
   let mut low_points:Vec<Point> = Vec::new();
@@ -113,14 +112,4 @@ fn find_low_points_and_risk(points: Vec<Point>) -> (Vec<Point>, u32) {
     } 
   }
   return (low_points, risk);
-}
-
-fn day_9_pt_2 (low_points: &Vec<Point>, points: &Vec<Point>) {
-
-  let mut basins = Vec::new();
-
-  for point in low_points {
-    basins.push(point.search_point(points, 1));
-  }
-  println!("Day 9 pt 2: {:?}", basins);
 }
