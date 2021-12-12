@@ -1,7 +1,7 @@
 use std::fs;
 // use std::fmt;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 struct Point {
     up: u32,
     down: u32,
@@ -91,24 +91,24 @@ pub fn day_9 () {
     }
   }
 
-  let (low_points, risk) = find_low_points_and_risk(points);
+  let (low_points, risk) = find_low_points_and_risk(&points);
   println!("Day 9 pt 1: {}", risk);
 
   let mut basins = Vec::new();
   for point in low_points {
-    basins.push(point.search_point(points, 1));
+    basins.push(point.search_point(&points.clone(), 1));
   }
   println!("Day 9 pt 2: {:?}", basins);
 }
 
 
-fn find_low_points_and_risk(points: Vec<Point>) -> (Vec<Point>, u32) {
+fn find_low_points_and_risk(points: &Vec<Point>) -> (Vec<Point>, u32) {
   let mut low_points:Vec<Point> = Vec::new();
   let mut risk = 0;
   for point in points {
     if point.is_center_low_point() {
             risk += point.center + 1;
-      low_points.push(point);
+      low_points.push(*point);
     } 
   }
   return (low_points, risk);
