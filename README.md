@@ -1,5 +1,7 @@
 # advent-of-rust
 
+![Screenshot](screenshot.png)
+
 https://adventofcode.com/
 
 # run
