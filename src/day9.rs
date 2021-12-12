@@ -92,7 +92,7 @@ pub fn day_9 () {
       if j > 0 {
         left = line.chars().nth(j-1).unwrap().to_digit(10).unwrap();
       }
-      let mut point = Point {
+      let point = Point {
         up: up,
         down: down,
         left: left,
@@ -106,13 +106,12 @@ pub fn day_9 () {
     }
   }
 
-  let (mut low_points, risk) = find_low_points_and_risk(&points);
+  let (low_points, risk) = find_low_points_and_risk(&points);
   println!("Day 9 pt 1: {}", risk);
 
   let mut basins:Vec<u32> = Vec::new();
-  for point in low_points {
+  for _point in low_points {
     let mut points_to_search:Vec<Point> = points.clone();
-    let mut start_point = point.clone();
 
     while points_to_search.len() > 0 {
       let mut current_point = points_to_search.pop().unwrap();
@@ -123,7 +122,7 @@ pub fn day_9 () {
         if current_point.center != 9 {
           basins.push(current_point.center);
           if current_point.left < 9 {
-            let mut left_point = points_to_search.iter().find(|p| p.i == current_point.i && p.j == current_point.j - 1);
+            let left_point = points_to_search.iter().find(|p| p.i == current_point.i && p.j == current_point.j - 1);
             if left_point.is_some() {
               let mut left_point = left_point.unwrap().clone();
               if !left_point.visited {
@@ -132,7 +131,7 @@ pub fn day_9 () {
               }
             }
           }
-            let mut right_point = points_to_search.iter().find(|p| p.i == current_point.i && p.j == current_point.j + 1);
+            let right_point = points_to_search.iter().find(|p| p.i == current_point.i && p.j == current_point.j + 1);
             if right_point.is_some() {
               let mut right_point = right_point.unwrap().clone();
               if !right_point.visited {
@@ -141,7 +140,7 @@ pub fn day_9 () {
               }
             }
           
-            let mut down_point = points_to_search.iter().find(|p| p.i == current_point.i + 1 && p.j == current_point.j);
+            let  down_point = points_to_search.iter().find(|p| p.i == current_point.i + 1 && p.j == current_point.j);
             if down_point.is_some() {
               let mut down_point = down_point.unwrap().clone();
               if !down_point.visited {
@@ -150,14 +149,14 @@ pub fn day_9 () {
               }
             }
    
-            let mut up_point = points_to_search.iter().find(|p| p.i == current_point.i - 1 && p.j == current_point.j);
-            if up_point.is_some() {
-              let mut up_point = up_point.unwrap().clone();
-              if !up_point.visited {
-                up_point.visited = true;
-                points_to_search.push(up_point);
-              }
-            }
+            // let mut up_point = points_to_search.iter().find(|p| p.i == current_point.i - 1 && p.j == current_point.j);
+            // if up_point.is_some() {
+            //   let mut up_point = up_point.unwrap().clone();
+            //   if !up_point.visited {
+            //     up_point.visited = true;
+            //     points_to_search.push(up_point);
+            //   }
+            // }
           
         }
       }
